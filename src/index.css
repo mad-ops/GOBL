@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+}
+
+body {
+  overscroll-behavior: none;
+}
+
+@layer components {
+  .card-consumed {
+    background-color: #16a34a !important;
+    /* Green 600 */
+    color: white !important;
+  }
+
+  .card-available {
+    background-color: #f3f4f6;
+    /* Gray 100 - Very Light Gray */
+    color: #0f172a;
+    /* Slate 900 */
+  }
+
+  .card-input-filled {
+    background-color: #dbeafe !important;
+    /* Blue 100 */
+    color: #1e3a8a !important;
+    /* Blue 900 */
+  }
+}
