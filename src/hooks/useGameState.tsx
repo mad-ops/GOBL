@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { format } from 'date-fns';
-import { generatePuzzle, validateSubmission } from '../lib/gameLogic';
+import { generatePuzzle, validateSubmission, calculateLetterUsage } from '../lib/gameLogic';
 import { loadDictionary } from '../lib/dictionary';
 import type { DailyPuzzle } from '../types';
 
@@ -170,30 +170,29 @@ export const useGameState = () => {
     const gameState = useMemo(() => {
         if (!puzzle) return { isComplete: false, capturedCounts: {}, score: 0 };
 
-        // Calculate usage based on INDICES now
-        // Flatten all submitted indices
+        // Construct current partial word from selected indices
+        const currentWord = selectedIndices.map(idx => puzzle.letters[idx]).join('');
+
+        // Include current (partial) word in the calc to show live score
+        const allWordsToScore = currentWord ? [...submissions, currentWord] : submissions;
+
+        // Use centralized logic from gameLogic.ts to ensure consistency
+        const logicState = calculateLetterUsage(puzzle.letters, allWordsToScore);
+
+        // Check completion based on indices coverage (which tracks visual state)
+        // logicState.isComplete is based on letter counts.
+        // We probably want to trust logicState for score.
+        // For completion, let's keep the index-based check as it's more precise for "filling the board".
+
         const allConsumedIndices = new Set(submissionIndices.flat());
-
-        // Calculate score: Total letters submitted
-        // Each submission is 5 letters.
-        const score = submissions.length * 5;
-        // Or strictly submissions.reduce((acc, w) => acc + w.length, 0);
-
-        // Completion: have we consumed all 25 generic slots?
-        // Wait, "consume a grid of 25 letters". 
-        // Does "consume" mean we touched index 0, index 1, ... index 24?
-        // YES. If we map 1:1, then completion is when allIndices.size === 25.
         const isComplete = allConsumedIndices.size === 25;
 
         return {
             isComplete,
-            score,
-            // capturedCounts is less relevant for logic now, but maybe for display?
-            // Actually display logic will use indices directly.
-            // We can keep a dummy capturedCounts if needed for compatibility or remove it.
-            capturedCounts: {}
+            score: logicState.score,
+            capturedCounts: logicState.capturedCounts
         };
-    }, [puzzle, submissions, submissionIndices]);
+    }, [puzzle, submissions, submissionIndices, selectedIndices]);
 
     const displayLetters = useMemo(() => {
         if (!puzzle) return [];

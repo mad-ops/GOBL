@@ -24,10 +24,22 @@ describe('Game Logic', () => {
 
     describe('calculateLetterUsage', () => {
         it('should calculate score correctly', () => {
+            // Case 1: Simple consumption
             const letters = Array(25).fill('A');
             const submissions = ['AAAAA'];
             const state = calculateLetterUsage(letters, submissions);
             expect(state.score).toBe(5);
+
+            // Case 2: Over-consumption
+            // Create board with only 5 'A's, rest 'B's
+            const scarceLetters = [...Array(5).fill('A'), ...Array(20).fill('B')];
+
+            // 6 As used, 5 As available.
+            // Captured = 5. Used = 6.
+            // Score = 2*5 - 6 = 4.
+            const submissions2 = ['AAAAA', 'A'];
+            const state2 = calculateLetterUsage(scarceLetters, submissions2);
+            expect(state2.score).toBe(4);
         });
 
         it('should detect completion', () => {

@@ -137,7 +137,7 @@ function App() {
         />
       )}
 
-      <Header onInfoClick={() => setShowCompletion(true)} />
+      <Header onInfoClick={() => setShowCompletion(true)} score={gameState.score} />
 
       <main className="flex-1 w-full max-w-lg px-4 py-2 flex flex-col">
         {/* Main Content Area */}

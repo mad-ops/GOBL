@@ -85,12 +85,22 @@ export const calculateLetterUsage = (puzzleLetters: string[], submissions: strin
     const totalCaptured = Object.values(capturedCounts).reduce((a, b) => a + b, 0);
     const isComplete = totalCaptured === 25;
 
+    // Scoring:
+    // +1 for every "unconsumed" letter chosen (captured)
+    // -1 for every "consumed" letter chosen (over-used)
+    //
+    // Logic:
+    // Points = (captured * 1) + ((totalUsed - captured) * -1)
+    //        = captured - totalUsed + captured
+    //        = 2 * captured - totalUsed
+    const score = (2 * totalCaptured) - totalUsed;
+
     return {
         puzzleCounts,
         usedCounts,
         capturedCounts,
         isComplete,
-        score: totalUsed // Lower is better
+        score // Higher is better
     };
 };
 
