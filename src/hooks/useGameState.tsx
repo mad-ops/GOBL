@@ -170,11 +170,15 @@ export const useGameState = () => {
     const gameState = useMemo(() => {
         if (!puzzle) return { isComplete: false, capturedCounts: {}, score: 0 };
 
+        // Check completion based on indices coverage (which tracks visual state)
+        const allConsumedIndices = new Set(submissionIndices.flat());
+        const isComplete = allConsumedIndices.size === 25;
+
         // Construct current partial word from selected indices
         const currentWord = selectedIndices.map(idx => puzzle.letters[idx]).join('');
 
         // Include current (partial) word in the calc to show live score
-        const allWordsToScore = currentWord ? [...submissions, currentWord] : submissions;
+        const allWordsToScore = (currentWord && !isComplete) ? [...submissions, currentWord] : submissions;
 
         // Use centralized logic from gameLogic.ts to ensure consistency
         const logicState = calculateLetterUsage(puzzle.letters, allWordsToScore);
@@ -184,8 +188,7 @@ export const useGameState = () => {
         // We probably want to trust logicState for score.
         // For completion, let's keep the index-based check as it's more precise for "filling the board".
 
-        const allConsumedIndices = new Set(submissionIndices.flat());
-        const isComplete = allConsumedIndices.size === 25;
+
 
         return {
             isComplete,

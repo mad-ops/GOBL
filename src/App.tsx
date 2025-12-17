@@ -11,7 +11,7 @@ function App() {
     currentInput,
     submitWord,
     shuffleBoard,
-    resetProgress,
+    resetProgress: originalResetProgress,
     gameState,
     submissions,
     displayLetters,
@@ -21,12 +21,18 @@ function App() {
     clearSelection
   } = useGameState();
 
+  const resetProgress = () => {
+    setHasInteracted(false);
+    originalResetProgress();
+  };
+
   const [errorShake, setErrorShake] = useState(false);
   const [successPop, setSuccessPop] = useState(false);
   const [warningShake, setWarningShake] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [showPostGameControls, setShowPostGameControls] = useState(false);
   const [showCompletion, setShowCompletion] = useState(false);
+  const [hasInteracted, setHasInteracted] = useState(false);
 
   const feedbackTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -72,6 +78,13 @@ function App() {
 
     // NO cleanup here to avoid cancelling timer on dependency changes (like submissions update)
   }, [currentInput, isProcessing, submitWord, clearSelection, gameState.isComplete, submissions.length]);
+
+  // Track interaction for placeholder logic (keyboard support)
+  useEffect(() => {
+    if (currentInput.length > 0 && !hasInteracted) {
+      setHasInteracted(true);
+    }
+  }, [currentInput, hasInteracted]);
 
   // Cleanup timer on component unmount only
   useEffect(() => {
@@ -121,6 +134,8 @@ function App() {
     }
 
     // Pass through to game logic
+    // Pass through to game logic
+    if (!hasInteracted) setHasInteracted(true);
     handleTileClick(index);
   };
 
@@ -134,6 +149,7 @@ function App() {
           submissions={submissions}
           onClose={() => setShowCompletion(false)}
           isComplete={gameState.isComplete}
+          onRestart={resetProgress}
         />
       )}
 
@@ -141,9 +157,15 @@ function App() {
 
       <main className="flex-1 w-full max-w-lg px-4 py-2 flex flex-col">
         {/* Main Content Area */}
-        <div className="flex flex-col items-center justify-center gap-2 flex-grow">
+        <div className="flex flex-col items-center justify-start gap-2 flex-grow">
 
-          <InputRow currentInput={currentInput} isError={errorShake} isSuccess={successPop || gameState.isComplete} isWarning={warningShake} />
+          <InputRow
+            currentInput={currentInput}
+            isError={errorShake}
+            isSuccess={successPop || gameState.isComplete}
+            isWarning={warningShake}
+            placeholder={(!hasInteracted && submissions.length === 0) ? "GUESS" : undefined}
+          />
 
           <GameBoard
             letters={displayLetters}
@@ -186,15 +208,6 @@ function App() {
                   disabled={isProcessing}
                 >
                   Clear
-                </button>
-
-                <button
-                  onClick={shuffleBoard}
-                  className="flex-1 !h-12 min-h-[48px] bg-slate-200 rounded-xl flex items-center justify-center shadow hover:bg-slate-300 active:bg-slate-400 active:scale-95 transition-all uppercase font-black text-sm tracking-wide text-slate-700 shrink-0"
-                  style={{ height: '48px' }}
-                  disabled={isProcessing}
-                >
-                  Shuffle
                 </button>
               </>
             )}

@@ -7,7 +7,7 @@ interface HeaderProps {
 
 export const Header = ({ onInfoClick, score }: HeaderProps) => {
     return (
-        <header className="flex items-center justify-between border-b border-par-surface max-w-lg mx-auto w-full h-16 px-4">
+        <header className="flex items-center justify-between border-b border-par-surface max-w-lg mx-auto w-full h-16 px-4 mb-1" style={{ marginBottom: '4px' }}>
             {/* Left: Info Icon - Centered in specific square matching header height */}
             <div
                 className="flex items-center justify-center border-r border-transparent"

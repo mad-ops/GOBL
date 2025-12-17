@@ -5,9 +5,10 @@ interface CompletionScreenProps {
     submissions: string[];
     onClose: () => void;
     isComplete: boolean;
+    onRestart?: () => void;
 }
 
-export const CompletionScreen = ({ score, submissions, onClose, isComplete }: CompletionScreenProps) => {
+export const CompletionScreen = ({ score, submissions, onClose, isComplete, onRestart }: CompletionScreenProps) => {
     return (
         <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/60 animate-fadeIn backdrop-blur-sm">
             <div
@@ -42,6 +43,16 @@ export const CompletionScreen = ({ score, submissions, onClose, isComplete }: Co
                         <h2 className="text-slate-400 uppercase tracking-widest font-bold mb-8 text-center py-2 text-[32px]">
                             SCORE: {score}
                         </h2>
+
+                        <div className="w-full max-w-[400px] px-1 mb-8">
+                            <button
+                                onClick={onRestart}
+                                className="w-full !h-12 min-h-[48px] bg-slate-200 rounded-xl flex items-center justify-center shadow hover:bg-slate-300 active:bg-slate-400 active:scale-95 transition-all uppercase font-black text-sm tracking-wide text-slate-700 shrink-0 cursor-pointer border border-slate-300"
+                                style={{ height: '48px' }}
+                            >
+                                TRY HARD MODE
+                            </button>
+                        </div>
                     </>
                 )}
 

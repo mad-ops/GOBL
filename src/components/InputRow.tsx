@@ -2,7 +2,7 @@ import clsx from 'clsx';
 
 
 
-export const InputRow = ({ currentInput, isError, isSuccess, isWarning }: { currentInput: string; isError: boolean; isSuccess?: boolean; isWarning?: boolean }) => {
+export const InputRow = ({ currentInput, isError, isSuccess, isWarning, placeholder }: { currentInput: string; isError: boolean; isSuccess?: boolean; isWarning?: boolean; placeholder?: string }) => {
     const slots = Array(5).fill('');
 
     return (
@@ -21,14 +21,14 @@ export const InputRow = ({ currentInput, isError, isSuccess, isWarning }: { curr
                                         ? "bg-yellow-500 text-white border-none"
                                         : i < currentInput.length
                                             ? "card-input-filled shadow-sm"
-                                            : "bg-transparent"
+                                            : !currentInput && placeholder ? "bg-blue-400 text-white border-none" : "bg-transparent"
                         )}
                         style={{
-                            backgroundColor: isSuccess ? '#22c55e' : isError ? '#ef4444' : isWarning ? '#eab308' : undefined,
-                            color: (isSuccess || isError || isWarning) ? 'white' : undefined,
+                            backgroundColor: isSuccess ? '#22c55e' : isError ? '#ef4444' : isWarning ? '#eab308' : (!currentInput && placeholder) ? '#60a5fa' : undefined,
+                            color: (isSuccess || isError || isWarning || (!currentInput && placeholder)) ? 'white' : undefined,
                         }}
                     >
-                        {currentInput[i] || ''}
+                        {currentInput[i] || (placeholder && !currentInput ? placeholder[i] : '')}
                     </div>
 
                     {/* Spacer (at least 2px) */}
