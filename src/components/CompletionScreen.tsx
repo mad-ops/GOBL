@@ -6,9 +6,10 @@ interface CompletionScreenProps {
     onClose: () => void;
     isComplete: boolean;
     onRestart?: () => void;
+    isHardMode?: boolean;
 }
 
-export const CompletionScreen = ({ score, submissions, onClose, isComplete, onRestart }: CompletionScreenProps) => {
+export const CompletionScreen = ({ score, submissions, onClose, isComplete, onRestart, isHardMode }: CompletionScreenProps) => {
     return (
         <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/60 animate-fadeIn backdrop-blur-sm">
             <div
@@ -20,7 +21,7 @@ export const CompletionScreen = ({ score, submissions, onClose, isComplete, onRe
                     className="text-slate-900 hover:text-black hover:scale-110 transition-all z-50"
                     style={{
                         position: 'absolute',
-                        top: '32px',
+                        top: '16px',
                         right: '32px',
                         background: 'transparent',
                         border: 'none',
@@ -36,23 +37,30 @@ export const CompletionScreen = ({ score, submissions, onClose, isComplete, onRe
                 {isComplete && (
                     <>
                         <h1 className="font-extrabold mb-8 tracking-widest uppercase mt-8 text-center text-slate-900 text-[32px]">
-                            COMPLETE!
+                            {isHardMode
+                                ? "Thank you for playing!"
+                                : (submissions.length === 5 ? "PERFECT!" : "COMPLETE!")}
                         </h1>
 
                         {/* Score Section */}
-                        <h2 className="text-slate-400 uppercase tracking-widest font-bold mb-8 text-center py-2 text-[32px]">
-                            SCORE: {score}
-                        </h2>
+                        {/* Score Section */}
+                        {isHardMode && (
+                            <h2 className="text-slate-400 uppercase tracking-widest font-bold mb-8 text-center py-2 text-[32px]">
+                                SWAPS: {score}
+                            </h2>
+                        )}
 
-                        <div className="w-full max-w-[400px] px-1 mb-8">
-                            <button
-                                onClick={onRestart}
-                                className="w-full !h-12 min-h-[48px] bg-slate-200 rounded-xl flex items-center justify-center shadow hover:bg-slate-300 active:bg-slate-400 active:scale-95 transition-all uppercase font-black text-sm tracking-wide text-slate-700 shrink-0 cursor-pointer border border-slate-300"
-                                style={{ height: '48px' }}
-                            >
-                                TRY HARD MODE
-                            </button>
-                        </div>
+                        {!isHardMode && submissions.length !== 5 && (
+                            <div className="w-full max-w-[400px] px-1 mb-8">
+                                <button
+                                    onClick={onRestart}
+                                    className="w-full !h-12 min-h-[48px] bg-slate-200 rounded-xl flex items-center justify-center shadow hover:bg-slate-300 active:bg-slate-400 active:scale-95 transition-all uppercase font-black text-sm tracking-wide text-slate-700 shrink-0 cursor-pointer border border-slate-300"
+                                    style={{ height: '48px' }}
+                                >
+                                    TRY FOR PERFECT
+                                </button>
+                            </div>
+                        )}
                     </>
                 )}
 
@@ -61,26 +69,28 @@ export const CompletionScreen = ({ score, submissions, onClose, isComplete, onRe
                 )}
 
                 {/* History */}
-                <div className="w-full mb-4 overflow-y-auto pr-2 flex-1 scrollbar-thin scrollbar-thumb-slate-300">
-                    <h2 className="text-slate-400 uppercase tracking-widest font-bold mb-8 text-center sticky top-0 bg-white py-2 z-10 text-[32px]">
-                        History
-                    </h2>
+                {!isHardMode && (
+                    <div className="w-full mb-4 overflow-y-auto pr-2 flex-1 scrollbar-thin scrollbar-thumb-slate-300">
+                        <h2 className="text-slate-400 uppercase tracking-widest font-bold mb-8 text-center sticky top-0 bg-white py-2 z-10 text-[32px]">
+                            History
+                        </h2>
 
-                    <div className="flex flex-col gap-4 items-center pb-12">
-                        {submissions.map((word, i) => (
-                            <div key={i} className="flex gap-2 my-[2px]">
-                                {word.split('').map((char, j) => (
-                                    <div
-                                        key={j}
-                                        className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center font-black text-slate-900 text-[24px]"
-                                    >
-                                        {char}
-                                    </div>
-                                ))}
-                            </div>
-                        ))}
+                        <div className="flex flex-col gap-4 items-center pb-12">
+                            {submissions.map((word, i) => (
+                                <div key={i} className="flex gap-2 my-[2px]">
+                                    {word.split('').map((char, j) => (
+                                        <div
+                                            key={j}
+                                            className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center font-black text-slate-900 text-[24px]"
+                                        >
+                                            {char}
+                                        </div>
+                                    ))}
+                                </div>
+                            ))}
+                        </div>
                     </div>
-                </div>
+                )}
             </div>
         </div>
     );

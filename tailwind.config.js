@@ -7,7 +7,7 @@ export default {
   theme: {
     extend: {
       colors: {
-        par: {
+        gobl: {
           bg: '#ffffff', // Light
           surface: '#e2e8f0', // Slate-200
           primary: '#16a34a', // Green-600 (darker for contrast on light)
