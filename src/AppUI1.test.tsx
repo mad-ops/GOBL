@@ -16,8 +16,6 @@ vi.mock('./hooks/useGameState', () => {
             clearSelection: vi.fn(),
             submitWord: vi.fn(),
             resetProgress: vi.fn(),
-            gameMode: 'standard',
-            startHardMode: vi.fn(),
             selectedIndices: [],
             isLoading: false,
             shuffleBoard: vi.fn()
@@ -33,7 +31,7 @@ describe('App UI - Standard Mode - Batch 1', () => {
     // TEST 1
     it('renders the header title', () => {
         render(<App />);
-        expect(screen.getByText(/Par/i)).toBeTruthy();
+        expect(screen.getByText(/GOBL/i)).toBeTruthy();
     });
 
     // TEST 2
@@ -43,10 +41,7 @@ describe('App UI - Standard Mode - Batch 1', () => {
     });
 
     // TEST 3
-    it('renders the hard mode icon', () => {
-        render(<App />);
-        expect(screen.getByTestId('hard-mode-icon')).toBeTruthy();
-    });
+
 
     // TEST 4
     it('does NOT render the score label in standard mode', () => {

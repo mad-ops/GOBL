@@ -62,27 +62,6 @@ describe('Standard Mode Logic - Batch 5 (Final)', () => {
         expect(result.current.currentInput).toBe('A');
     });
 
-    // TEST 45
-    it('swapping modes resets standard progress', async () => {
-        const { result } = renderHook(() => useGameState());
-        await waitFor(() => expect(result.current.isLoading).toBe(false));
-        act(() => result.current.handleTileClick(0));
-        act(() => result.current.toggleGameMode());
-        expect(result.current.selectedIndices).toEqual([]);
-    });
-
-    // TEST 46
-    it('hard mode is initially false', () => {
-        const { result } = renderHook(() => useGameState());
-        expect(result.current.gameMode).toBe('standard');
-    });
-
-    // TEST 47
-    it('swapCount is 0 initially', () => {
-        const { result } = renderHook(() => useGameState());
-        expect(result.current.swapCount).toBe(0);
-    });
-
     // TEST 48
     it('displayLetters have IDs', async () => {
         const { result } = renderHook(() => useGameState());

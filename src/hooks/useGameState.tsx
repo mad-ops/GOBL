@@ -5,7 +5,7 @@ import { loadDictionary } from '../lib/dictionary';
 import { createInitialBoard, swapRowsForSubmission, type BoardState } from '../lib/boardState'; // Import new logic
 import type { DailyPuzzle } from '../types';
 
-const STORAGE_KEY = 'par_game_state';
+const STORAGE_KEY = 'gobl_game_state';
 
 interface PersistedState {
     date: string;
@@ -27,10 +27,7 @@ export const useGameState = () => {
     // Initialize with empty until puzzle loads
     const [boardState, setBoardState] = useState<BoardState | null>(null);
 
-    // Hard Mode State
-    const [gameMode, setGameMode] = useState<'standard' | 'hard'>('standard');
-    const [hardModeBoard, setHardModeBoard] = useState<string[]>([]);
-    const [swapCount, setSwapCount] = useState(0);
+
 
     // Initialize
     useEffect(() => {
@@ -109,41 +106,7 @@ export const useGameState = () => {
         }
     }, [submissions, submissionIndices, puzzle, today, boardState]);
 
-    const toggleGameMode = () => {
-        if (!puzzle) return;
 
-        if (gameMode === 'hard') {
-            setHardModeBoard([]);
-            setSwapCount(0);
-
-            // Standard Reset
-            setSubmissions([]);
-            setSubmissionIndices([]);
-            setSelectedIndices([]);
-            setShuffleSeed(0);
-            setBoardState(createInitialBoard(puzzle.letters));
-            setGameMode('standard');
-        } else {
-            setGameMode('hard');
-            setHardModeBoard([...puzzle.letters]);
-
-            setSwapCount(0);
-            setSelectedIndices([]);
-            setSubmissions([]);
-            setSubmissionIndices([]);
-            // Board state for Standard irrelevant in Hard, but we keep it sync logic separate ? 
-            // Actually hard mode doesn't use boardState, it uses hardModeBoard.
-        }
-    };
-
-    const switchTiles = (indexA: number, indexB: number) => {
-        setHardModeBoard(prev => {
-            const newBoard = [...prev];
-            [newBoard[indexA], newBoard[indexB]] = [newBoard[indexB], newBoard[indexA]];
-            return newBoard;
-        });
-        setSwapCount(prev => prev + 1);
-    };
 
     const submitWord = () => {
         if (!puzzle || !boardState) return;
@@ -188,25 +151,7 @@ export const useGameState = () => {
     const handleTileClick = (index: number, shouldReset = false) => {
         if (gameState.isComplete) return;
 
-        if (gameMode === 'hard') {
-            if (selectedIndices.length === 0) {
-                setSelectedIndices([index]);
-            } else {
-                const firstIndex = selectedIndices[0];
-                if (firstIndex === index) {
-                    setSelectedIndices([]);
-                } else {
-                    setSelectedIndices([firstIndex, index]);
-                    setTimeout(() => {
-                        switchTiles(firstIndex, index);
-                        setSelectedIndices([]);
-                    }, 500);
-                }
-            }
-            return;
-        }
 
-        // Standard Mode Click
         if (gameState.isComplete) return;
 
         // Check if consumed (locked)
@@ -263,9 +208,6 @@ export const useGameState = () => {
         setSubmissionIndices([]);
         setSelectedIndices([]);
         setShuffleSeed(0);
-        setGameMode('standard');
-        setHardModeBoard([]);
-        setSwapCount(0);
 
         // Reset board to initial puzzle state
         if (puzzle) {
@@ -277,25 +219,6 @@ export const useGameState = () => {
     // Derived state
     const gameState = useMemo(() => {
         if (!puzzle || !boardState) return { isComplete: false, capturedCounts: {}, score: 0 };
-
-        if (gameMode === 'hard') {
-            let isComplete = false;
-            if (hardModeBoard.length > 0) {
-                isComplete = true;
-                for (let row = 0; row < 5; row++) {
-                    const word = hardModeBoard.slice(row * 5, row * 5 + 5).join('').toUpperCase();
-                    if (!dictionary.has(word)) {
-                        isComplete = false;
-                        break;
-                    }
-                }
-            }
-            return {
-                isComplete,
-                score: swapCount,
-                capturedCounts: {}
-            };
-        }
 
         // Standard Logic
         const allConsumedIndices = new Set(submissionIndices.flat());
@@ -315,32 +238,10 @@ export const useGameState = () => {
             score: logicState.score,
             capturedCounts: logicState.capturedCounts
         };
-    }, [puzzle, submissions, submissionIndices, selectedIndices, gameMode, hardModeBoard, swapCount, dictionary, boardState]);
+    }, [puzzle, submissions, submissionIndices, selectedIndices, dictionary, boardState]);
 
     const displayLetters = useMemo(() => {
         if (!puzzle || !boardState) return [];
-
-        if (gameMode === 'hard') {
-            // Hard Mode Display Logic (unchanged from original except for vars)
-            const validIndices = new Set<number>();
-            let validRowCount = 0;
-            for (let row = 0; row < 5; row++) {
-                const startIndex = row * 5;
-                const rowLetters = hardModeBoard.slice(startIndex, startIndex + 5);
-                const word = rowLetters.join('').toUpperCase();
-                if (dictionary.has(word)) {
-                    validRowCount++;
-                    for (let i = 0; i < 5; i++) {
-                        validIndices.add(startIndex + i);
-                    }
-                }
-            }
-            return hardModeBoard.map((char, index) => ({
-                char,
-                status: (validIndices.has(index) ? 'consumed' : 'available') as 'consumed' | 'available',
-                id: index
-            }));
-        }
 
         // Standard Mode - Use BoardState
         const consumedSet = new Set(submissionIndices.flat());
@@ -373,8 +274,6 @@ export const useGameState = () => {
             // Shuffle the available items
             // But waiting, their IDs MUST enable mapping back to handleTileClick logic.
             // ID = Board Index.
-            // If we visual-shuffle, does ID stay tied to the visual slot?
-            // "ID" usually means "Index in the primary state array".
             // DisplayLetters usually maps to the grid slots in order.
             // If we sort the ARRAY, we change which tile appears in slot X.
             // E.g. Slot 24 might show Tile 10.
@@ -421,7 +320,7 @@ export const useGameState = () => {
         }
 
         return items;
-    }, [puzzle, submissionIndices, shuffleSeed, gameMode, hardModeBoard, dictionary, boardState]);
+    }, [puzzle, submissionIndices, shuffleSeed, dictionary, boardState]);
 
     const currentInput = selectedIndices.map(idx => boardState?.letters[idx] || '').join('');
 
@@ -439,11 +338,6 @@ export const useGameState = () => {
         gameState,
         displayLetters,
         isLoading: !puzzle || !boardState,
-        gameMode,
-        toggleGameMode,
-        switchTiles,
-        swapCount,
-        hardModeBoard,
         dictionary
     };
 };

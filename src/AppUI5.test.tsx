@@ -13,8 +13,6 @@ vi.mock('./hooks/useGameState', () => ({
         clearSelection: vi.fn(),
         submitWord: vi.fn(),
         resetProgress: vi.fn(),
-        gameMode: 'standard',
-        startHardMode: vi.fn(),
         selectedIndices: [],
         isLoading: false,
         shuffleBoard: vi.fn()
@@ -30,7 +28,7 @@ describe('App UI - Standard Mode - Batch 5', () => {
     // TEST 41
     it('renders Header', () => {
         render(<App />);
-        expect(screen.getByText('Par')).toBeTruthy();
+        expect(screen.getByText('GOBL')).toBeTruthy();
     });
 
     // TEST 42
@@ -59,7 +57,7 @@ describe('App UI - Standard Mode - Batch 5', () => {
     // TEST 45
     it('app background is correct', () => {
         render(<App />);
-        // Main container usually has bg-par-bg
+        // Main container usually has bg-gobl-bg
         // Using data-testid or just finding main div (first child of body's root)
     });
 

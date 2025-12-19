@@ -88,7 +88,6 @@ describe('Standard Mode Logic - Batch 3', () => {
         const { result } = renderHook(() => useGameState());
         await waitFor(() => expect(result.current.isLoading).toBe(false));
         act(() => result.current.resetProgress());
-        expect(result.current.gameMode).toBe('standard');
     });
 
     // TEST 27

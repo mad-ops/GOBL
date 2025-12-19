@@ -17,8 +17,7 @@ const mockGameState = {
     clearSelection: vi.fn(),
     submitWord: vi.fn(),
     resetProgress: mockResetProgress,
-    gameMode: 'standard',
-    toggleGameMode: vi.fn(),
+
     selectedIndices: [],
     isLoading: false,
     shuffleBoard: vi.fn()

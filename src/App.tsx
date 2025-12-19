@@ -17,9 +17,7 @@ function App() {
     isLoading,
     selectedIndices,
     handleTileClick,
-    clearSelection,
-    gameMode, // New export
-    toggleGameMode // New export
+    clearSelection
   } = useGameState();
 
   const resetProgress = () => {
@@ -132,83 +130,75 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-par-bg flex flex-col items-center relative overflow-hidden">
+    <div className="min-h-screen bg-gobl-bg flex flex-col items-center relative overflow-hidden">
       {/* Completion Overlay */}
       {/* Completion Overlay Removed - Replaced by PERF! state */}
 
       {/* Header */}
 
       <Header
-        onInfoClick={() => { }} // Disabled modal info click for now? Or restore modal? User said "Do not show modal on completion". Info click usually shows instructions.
-        onHardModeClick={toggleGameMode}
-
+        onInfoClick={() => { }}
         score={gameState.score}
-        label={gameMode === 'hard' ? 'SWAPS' : 'SCORE'}
-        showScore={gameMode === 'hard'}
+        showScore={false}
       />
 
       <main className="flex-1 w-full max-w-lg px-4 py-2 flex flex-col">
         {/* Main Content Area */}
         <div className="flex flex-col items-center justify-start gap-2 flex-grow">
 
-          {gameMode !== 'hard' && (
-            <InputRow
-              currentInput={gameState.isComplete ? 'PERF!' : (frozenInput || currentInput)}
-              isError={errorShake}
-              isSuccess={successPop}
-              isWarning={warningShake}
-              isComplete={gameState.isComplete}
-              placeholder={(!hasInteracted && gameMode !== 'hard') ? 'GUESS' : undefined}
-            />
-          )}
+          <InputRow
+            currentInput={gameState.isComplete ? 'PERF!' : (frozenInput || currentInput)}
+            isError={errorShake}
+            isSuccess={successPop}
+            isWarning={warningShake}
+            isComplete={gameState.isComplete}
+            placeholder={!hasInteracted ? 'GUESS' : undefined}
+          />
 
           <GameBoard
             letters={displayLetters}
             selectedIndices={selectedIndices}
             onTileClick={onTileClickWrapped}
-            isHardMode={gameMode === 'hard'}
           />
 
 
 
           {/* Control Bar - Dynamic based on state */}
-          {gameMode !== 'hard' && (
-            <div className="flex justify-center gap-2 w-full max-w-[400px] z-10" style={{ gap: '8px', marginTop: '4px' }}>
-              {gameState.isComplete ? (
-                <>
-                  <button
-                    onClick={resetProgress}
-                    className="flex-1 !h-12 min-h-[48px] bg-slate-200 rounded-xl flex items-center justify-center shadow hover:bg-slate-300 active:bg-slate-400 active:scale-95 transition-all uppercase font-black text-sm tracking-wide text-slate-700 shrink-0"
-                    style={{ height: '48px' }}
-                  >
-                    AGAIN
-                  </button>
-                </>
-              ) : (
-                <>
-                  <button
-                    onClick={() => {
-                      clearSelection();
-                      setHasInteracted(true);
-                    }}
-                    className="flex-1 !h-12 min-h-[48px] bg-slate-200 rounded-xl flex items-center justify-center shadow hover:bg-slate-300 active:bg-slate-400 active:scale-95 transition-all uppercase font-black text-sm tracking-wide text-slate-700 shrink-0"
-                    style={{ height: '48px' }}
-                    aria-label="Clear Selection"
-                    disabled={isProcessing}
-                  >
-                    Clear
-                  </button>
-                  <button
-                    onClick={resetProgress}
-                    className="flex-1 !h-12 min-h-[48px] bg-slate-200 rounded-xl flex items-center justify-center shadow hover:bg-slate-300 active:bg-slate-400 active:scale-95 transition-all uppercase font-black text-sm tracking-wide text-slate-700 shrink-0"
-                    style={{ height: '48px' }}
-                  >
-                    RESET
-                  </button>
-                </>
-              )}
-            </div>
-          )}
+          <div className="flex justify-center gap-2 w-full max-w-[400px] z-10" style={{ gap: '8px', marginTop: '4px' }}>
+            {gameState.isComplete ? (
+              <>
+                <button
+                  onClick={resetProgress}
+                  className="flex-1 !h-12 min-h-[48px] bg-slate-200 rounded-xl flex items-center justify-center shadow hover:bg-slate-300 active:bg-slate-400 active:scale-95 transition-all uppercase font-black text-sm tracking-wide text-slate-700 shrink-0"
+                  style={{ height: '48px' }}
+                >
+                  AGAIN
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={() => {
+                    clearSelection();
+                    setHasInteracted(true);
+                  }}
+                  className="flex-1 !h-12 min-h-[48px] bg-slate-200 rounded-xl flex items-center justify-center shadow hover:bg-slate-300 active:bg-slate-400 active:scale-95 transition-all uppercase font-black text-sm tracking-wide text-slate-700 shrink-0"
+                  style={{ height: '48px' }}
+                  aria-label="Clear Selection"
+                  disabled={isProcessing}
+                >
+                  Clear
+                </button>
+                <button
+                  onClick={resetProgress}
+                  className="flex-1 !h-12 min-h-[48px] bg-slate-200 rounded-xl flex items-center justify-center shadow hover:bg-slate-300 active:bg-slate-400 active:scale-95 transition-all uppercase font-black text-sm tracking-wide text-slate-700 shrink-0"
+                  style={{ height: '48px' }}
+                >
+                  RESET
+                </button>
+              </>
+            )}
+          </div>
 
         </div>
       </main >

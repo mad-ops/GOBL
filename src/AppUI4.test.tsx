@@ -13,8 +13,6 @@ vi.mock('./hooks/useGameState', () => ({
         clearSelection: vi.fn(),
         submitWord: vi.fn(),
         resetProgress: vi.fn(),
-        gameMode: 'standard',
-        toggleGameMode: vi.fn(),
         selectedIndices: [],
         isLoading: false,
         shuffleBoard: vi.fn()

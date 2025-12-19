@@ -24,7 +24,7 @@ export const StandardBoard = ({ letters, selectedIndices, onTileClick }: GameBoa
                             isSelected ? "z-10" : "",
 
                             // Base State (only if not selected)
-                            (!isSelected && l.status === 'consumed') && "bg-par-primary card-consumed",
+                            (!isSelected && l.status === 'consumed') && "bg-gobl-primary card-consumed",
                             (!isSelected && l.status !== 'consumed') && "card-available",
 
                             // Dimmed if consumed but not selected
