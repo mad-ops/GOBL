@@ -263,8 +263,7 @@ export const useGameState = () => {
             // Unconsumed items can shuffle among themselves.
 
             // Separate
-            const fixedItems = items.filter(item => item.status === 'consumed');
-            const shuffleItems = items.filter(item => item.status === 'available');
+
 
             const seedRandom = (i: number) => {
                 const x = Math.sin(shuffleSeed + i) * 10000;

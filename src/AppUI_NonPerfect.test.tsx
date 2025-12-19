@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { render, screen, act, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import App from './App';
 
 import { useGameState } from './hooks/useGameState';
@@ -31,16 +31,23 @@ describe('App UI - Standard Mode - Imperfect Completion', () => {
     beforeEach(() => {
         vi.clearAllMocks();
         // Reset the mock implementation for useGameState before each test
-        vi.mocked(useGameState).mockReturnValue(mockGameState);
+        vi.mocked(useGameState).mockReturnValue({
+            ...mockGameState,
+            backspace: vi.fn(),
+            dictionary: new Set(),
+
+        } as any);
     });
 
     it('completes the game and shows PERF!', async () => {
         // Mock complete state (imperfect score but complete)
         vi.mocked(useGameState).mockReturnValue({
             ...mockGameState,
-            gameState: { isComplete: true, score: 6 },
+            gameState: { isComplete: true, score: 6, capturedCounts: {} },
             submissions: Array(6).fill('ABCDE'),
-        });
+            backspace: vi.fn(),
+            dictionary: new Set(),
+        } as any);
 
         const { getByText } = render(<App />);
         expect(getByText('P')).toBeTruthy();
@@ -48,14 +55,22 @@ describe('App UI - Standard Mode - Imperfect Completion', () => {
     });
 
     it('clicking AGAIN triggers resetProgress', () => {
+        // Mock complete state
         vi.mocked(useGameState).mockReturnValue({
             ...mockGameState,
-            gameState: { isComplete: true, score: 6 },
-            resetProgress: mockResetProgress
-        });
+            gameState: { isComplete: true, score: 6, capturedCounts: {} },
+            submissions: Array(6).fill('ABCDE'),
+            backspace: vi.fn(),
+            dictionary: new Set(),
+        } as any);
 
-        const { getByText } = render(<App />);
-        fireEvent.click(getByText('AGAIN'));
+        render(<App />);
+
+        // Click AGAIN
+        const againButton = screen.getByText('AGAIN');
+        fireEvent.click(againButton);
+
         expect(mockResetProgress).toHaveBeenCalled();
     });
 });
+

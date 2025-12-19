@@ -1,4 +1,5 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+
+import { describe, it, vi, beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useGameState } from './hooks/useGameState';
 // Mock necessary modules
@@ -9,8 +10,11 @@ vi.mock('./lib/dictionary', () => ({
     })
 }));
 
+// Mock storage to start fresh
+
+
 // We need to wait for async load
-const waitForLoad = async (result: any) => {
+const waitForLoad = async () => {
     await act(async () => {
         await new Promise(resolve => setTimeout(resolve, 50));
     });
@@ -23,8 +27,8 @@ describe('Board Swap Logic', () => {
     });
 
     it('swaps submitted word to the top row', async () => {
-        const { result } = renderHook(() => useGameState());
-        await waitForLoad(result);
+        renderHook(() => useGameState());
+        await waitForLoad();
 
         // Assume puzzle is loaded "HELLO", "WORLD"...
         // We can't easily force the puzzle letters without mocking generatePuzzle logic or result.

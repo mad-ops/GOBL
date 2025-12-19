@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { createInitialBoard, swapRowsForSubmission, BoardState } from './boardState';
+import { createInitialBoard, swapRowsForSubmission } from './boardState';
 
 describe('swapRowsForSubmission', () => {
     it('swaps row 0 with scattered submission correctly', () => {
